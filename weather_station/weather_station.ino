@@ -7,6 +7,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+#include "image_logo.h"
+
 //OLED define
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -25,8 +27,9 @@ float minTemperature = 100;
 float maxTemperature = 0;
 
 //Button define
-const int buttonPin = 6;
+const int buttonPin = 12;
 int buttonState = 0;
+const int ledPin =  8;
 
 
 DHT dht(DHTPIN, DHTTYPE) ;//initialize sensor
@@ -36,6 +39,7 @@ void setup() {
 
   //button
   pinMode(buttonPin, INPUT);
+  pinMode(ledPin, OUTPUT);
 
   dht.begin();
 
@@ -44,24 +48,37 @@ void setup() {
     Serial.println(F("SSD1306 allocation failed"));
     for (;;);
   }
+  display.clearDisplay();
   
-  //display.display(); //Display logo
+  display.drawBitmap(0, 0, logo_bmp, 128, 64, WHITE);
+  display.display(); //Display logo
+  delay(800);
   display.clearDisplay();
 
 }
 
 void loop() {
+  digitalWrite(ledPin, HIGH);
   delay(600);
   humidity = dht.readHumidity();
   temperature = dht.readTemperature();
 
   buttonState = digitalRead(buttonPin);
   
+Serial.println("H:");
+Serial.print(humidity);
+Serial.print("T:");
+Serial.println(temperature);
+  
   if(buttonState == HIGH) {
+    Serial.println("MAXX"); 
     showMinMaxWeatherHUD();
   } else {
     showWeatherHUD();
     setRecordNumbers();
+
+    
+    digitalWrite(ledPin, LOW);
   }  
 }
 
