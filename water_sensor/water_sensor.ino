@@ -6,8 +6,7 @@
 
 // defines variables
 float duration; // variable for the duration of sound wave travel
-int distance; // variable for the distance measurement
-
+int distance; // variable for the distance m
 WaterDisplay waterDisplay;
 
 
@@ -15,10 +14,7 @@ void setup()
 {
   while(!Serial) {} // Waiting pro micro to start Serial
   waterDisplay = WaterDisplay();
-  //Sonic Sensor
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
-
+  pinMode(echoPin, INPUT); // Sets the echoPin as an INPU
   Serial.begin(9600); //This pipes to the serial monitor
  
   Serial.println("Initialize Display");
