@@ -24,8 +24,9 @@ void loop() {
   delay(1000);
   if (count == 10) {
     going_to_sleep();
+  } else {
+    count++;
   }
-  count++;
 }
 
 void going_to_sleep(){
@@ -37,8 +38,9 @@ void going_to_sleep(){
   delay(500);
   Serial.println("just woke up!");
   detachInterrupt(2);
+  count = 0;
 }
 
 void wakeUp(){
-  count = 0;
+
 }
