@@ -96,6 +96,7 @@ void WaterDisplay::drawWaterLevel(float distanceToWater) {
    *  Top diameter: 1,51m
    *  Botton diameter: 1,21m
    */
+  Serial.println(distanceToWater);
   int percentage = ((72 - distanceToWater) / 72) * 100;
   
   //fill percentage box
@@ -103,8 +104,11 @@ void WaterDisplay::drawWaterLevel(float distanceToWater) {
   display.setTextSize(3);
   display.setTextColor(WHITE);
   display.setCursor( 10, 30 );
+  //display.print( distanceToWater );
+
   display.print( percentage );
-  display.print( "%" );
+  
+ // display.print( "%" );
 
   // fill level bars
   // Parameters: X, Y, Width, Height, COLOR
