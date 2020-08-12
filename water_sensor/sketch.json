@@ -1,0 +1,8 @@
+
+{
+  "cpu": {
+    "fqbn": "SparkFun:avr:promicro",
+    "name": "Arduino micro",
+    "port": "/dev/cu.usbmodem141101"
+  }
+}

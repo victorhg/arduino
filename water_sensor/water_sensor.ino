@@ -6,13 +6,13 @@
 
 // defines variables
 float duration; // variable for the duration of sound wave travel
-int distance; // variable for the distance m
+float distance; // variable for the distance m
 WaterDisplay waterDisplay;
 
 
 void setup()
 {
-  while(!Serial) {} // Waiting pro micro to start Serial
+  //while(!Serial) {} // Waiting pro micro to start Serial
   waterDisplay = WaterDisplay();
   pinMode(echoPin, INPUT); // Sets the echoPin as an INPU
   Serial.begin(9600); //This pipes to the serial monitor

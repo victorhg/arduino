@@ -16,13 +16,12 @@ class WaterDisplay {
     WaterDisplay();
     void putOnDisplay(int size, int x, int y, float value, String unit);
     void putOnDisplay(int size, int x, int y, String unit);
-    void drawWaterLevel(int percentage);
+    void drawWaterLevel(float distanceToWater);
 
-    void clearDisplay();
-    void updateDisplay();
     void startDisplay();
     void displayHeader();
   private:
-
+    void clearDisplay();
+    void updateDisplay();
     Adafruit_SSD1306 display;
 };
