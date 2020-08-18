@@ -103,13 +103,20 @@ void WaterDisplay::drawWaterLevel(float distanceToWater) {
   display.fillRect(1, 20 , 72, 42, BLACK);
   display.setTextSize(3);
   display.setTextColor(WHITE);
-  display.setCursor( 10, 30 );
+  display.setCursor( 10, 27 );
   //display.print( distanceToWater );
 
   display.print( percentage );
   
- // display.print( "%" );
+  display.print( "%" );
 
+// distance
+display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor( 10, 53 );
+  display.print( distanceToWater );
+  display.print("cm");
+  
   // fill level bars
   // Parameters: X, Y, Width, Height, COLOR
   display.fillRect(77, 22 , 49, 40, BLACK);
