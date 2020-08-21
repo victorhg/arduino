@@ -3,117 +3,106 @@
 #include <Time.h>
 #include <Arduino_JSON.h>
 
-#include <HTTPClient.h>
 #include <NTPClient.h>
 #include "oledDisplay.h"
+#include "weather_api.h"
 
 const char* ssid = "wonderland2G_EXT";
 const char* password = "a1b2c3d4e5";
-
-
-const String endpoint = "https://api.openweathermap.org/data/2.5/onecall?lon=-46.64&lat=-23.55&exclude=minutely,hourly&units=metric&appid=";
-const String weatherAPIKey = "404d2e01359620ba0f6d44cbb1eddf99";
+String apiKey = "404d2e01359620ba0f6d44cbb1eddf99";
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "a.ntp.br");
-
-HTTPClient http;
-
 
 // Variables to save date and time
 String formattedDate;
 String dayStamp;
 String timeStamp;
 
+long currentTemperature;
+long currentHumidity;
+
 OledDisplay display;
+WeatherApi weatherApi;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   
-  //display = OledDisplay();
-  //display.startDisplay();
+   display = OledDisplay();
+  display.startDisplay();
    connectToWifi();
+
+   weatherApi.updateWeatherInfo(apiKey);
+  
+
    delay(800);
-  //timeClient.begin();
-  //timeClient.setTimeOffset(-3600*3);//Brazil
+  timeClient.begin();
+  timeClient.setTimeOffset(-3600*3);//Brazil
   
 }
 
 void loop() {
-  //showDateAndTime();
-
-
-  http.begin(endpoint+weatherAPIKey);
-
-
-  int httpCode = http.GET();  //Make the request
- 
-  if (httpCode > 0) { //Check for the returning code
-      String payload = http.getString();
-      weatherOnScreen(payload);
-    }
-    else {
-      Serial.println("Error on HTTP request");
-    }
- 
-    http.end(); 
-
-    delay(1000);
+  display.clearDisplay();
+  showDateAndTime();
+  
+  showForecast();
+  display.updateDisplay();
+  
+  delay(2000);
 }
 
-void weatherOnScreen(String weatherJson) {
- JSONVar myObject = JSON.parse(weatherJson);
- if (JSON.typeof(myObject) == "undefined") {
-    Serial.println("Parsing input failed!");
-    //display.putOnDisplay(2, 1, 40, "ERROR JSON");
-    //display.updateDisplay();
-    return;
-  }
-  //Serial.println(myObject);
-  Serial.println("Today");
-  Serial.println(myObject["current"]["temp"]);
-  Serial.println(myObject["current"]["humidity"]);
-  Serial.println(myObject["current"]["weather"][0]["main"]);
-  Serial.println("Tomorrow");
-  Serial.println(myObject["daily"][1]["weather"][0]["main"]);
-  Serial.println(myObject["daily"][1]["temp"]["day"]);
-   //display.putOnDisplay(2, 1, 40, (const char*) myObject["lon"]);
+void showForecast(){
+  currentTemperature = weatherApi.weatherForecast.current.temperature;
+  currentHumidity = weatherApi.weatherForecast.current.humidity;
+  
+
+  display.putOnDisplay(3, 3, 30, String(currentTemperature)+"C");
 
 
-  //display.updateDisplay();
+  display.putOnDisplay(1, 33, 56, String(currentHumidity)+"%");
+  
+  display.putOnDisplay(1, 1, 56, weatherApi.weatherForecast.current.weatherInfo.main);
+  
+  String minDay = "Min " + String(weatherApi.weatherForToday().temperatures.min) + "C";
+  String maxDay = "Max " + String( weatherApi.weatherForToday().temperatures.max) + "C";
+  display.putOnDisplay(1, 68, 45, minDay);
+  display.putOnDisplay(1, 68, 56,  maxDay );
 
 }
+
 
 void showDateAndTime() {
-  display.clearDisplay();
   while(!timeClient.update()) {
     timeClient.forceUpdate();
   }
-  // The formattedDate comes with the following format:
-  // 2018-05-28T16:00:13Z
-  // We need to extract date and time
   formattedDate = timeClient.getFormattedDate();
   
 
-  // Extract date
   int splitT = formattedDate.indexOf("T");
   dayStamp = formattedDate.substring(0, splitT);
-  display.putOnDisplay(2, 1, 1, dayStamp);
-  // Extract time
-  timeStamp = formattedDate.substring(splitT+1, formattedDate.length()-1);
-  display.putOnDisplay(2, 1, 20, timeStamp);
+  String strDay = dayStamp.substring(splitT - 2, splitT) + "/" + dayStamp.substring(splitT-5, splitT -3);
+
+  display.putOnDisplay(2, 59, 28, strDay);
+  
+  String hoursStr = timeClient.getHours() < 10 ? "0" + String(timeClient.getHours()) : String(timeClient.getHours());
+
+  String minuteStr = timeClient.getMinutes() < 10 ? "0" + String(timeClient.getMinutes()) : String(timeClient.getMinutes());
+
+  timeStamp = hoursStr + ":" + minuteStr;
+  //timeStamp = formattedDate.substring(splitT+1, formattedDate.length()-1);
+
+  display.putOnDisplay(3, 20, 1, timeStamp);
 
 
-  display.updateDisplay();
 
 }
 
 void connectToWifi() {
-  //display.clearDisplay();
+  display.clearDisplay();
   WiFi.begin(ssid, password);
-  //display.putOnDisplay(2, 1, 20, "Connecting to WiFi..");
-  //display.updateDisplay();
+  display.putOnDisplay(2, 1, 20, "Connecting to WiFi..");
+  display.updateDisplay();
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("Connecting to WiFi..");

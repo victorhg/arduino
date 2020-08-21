@@ -1,5 +1,6 @@
 #include "weather_api.h"
 
+WeatherApi::WeatherApi(){ }
 
 CurrentWeather WeatherApi::currentWeather() {
   return weatherForecast.current; 

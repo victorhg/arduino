@@ -4,7 +4,7 @@
 #include <AUnit.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include "weather_api.h"
+#include <weather_api.h>
 
 String apiKey = "404d2e01359620ba0f6d44cbb1eddf99";
 
@@ -29,6 +29,7 @@ test(incorrect) {
 void setup() {
   delay(1000); // wait for stability on some boards to prevent garbage Serial
   Serial.begin(115200); // ESP8266 default of 74880 not supported on Linux
+
   WiFi.begin(ssid2, password2);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
