@@ -21,8 +21,8 @@ class OledDisplay {
     void displayHeader();
     void clearDisplay();
     void updateDisplay();
+    void drawAlarm();
 
   private:
     Adafruit_SSD1306 display;
 };
-

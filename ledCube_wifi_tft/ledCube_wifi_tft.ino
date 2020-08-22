@@ -7,6 +7,9 @@
 #include "oledDisplay.h"
 #include "weather_api.h"
 
+#define ALARM_HOUR 7
+#define ALARM_MINUTE 0
+
 const char* ssid = "wonderland2G_EXT";
 const char* password = "a1b2c3d4e5";
 String apiKey = "404d2e01359620ba0f6d44cbb1eddf99";
@@ -18,6 +21,8 @@ NTPClient timeClient(ntpUDP, "a.ntp.br");
 String formattedDate;
 String dayStamp;
 String timeStamp;
+int currentHour;
+int currentMinutes;
 
 long currentTemperature;
 long currentHumidity;
@@ -29,14 +34,14 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   
-   display = OledDisplay();
+  display = OledDisplay();
   display.startDisplay();
-   connectToWifi();
+  connectToWifi();
 
-   weatherApi.updateWeatherInfo(apiKey);
-  
-
-   delay(800);
+  weatherApi.updateWeatherInfo(apiKey);
+ 
+  //NTP hour  
+  delay(800);
   timeClient.begin();
   timeClient.setTimeOffset(-3600*3);//Brazil
   
@@ -44,21 +49,29 @@ void setup() {
 
 void loop() {
   display.clearDisplay();
-  showDateAndTime();
   
+  showDateAndTime();
   showForecast();
+  checkAlarm();
+  
   display.updateDisplay();
   
   delay(2000);
 }
 
+void checkAlarm(){
+  if(currentMinutes == ALARM_MINUTE && currentHour == ALARM_HOUR){
+    display.drawAlarm(); 
+    weatherApi.updateWeatherInfo(apiKey);
+  }
+ 
+}
+
 void showForecast(){
   currentTemperature = weatherApi.weatherForecast.current.temperature;
   currentHumidity = weatherApi.weatherForecast.current.humidity;
-  
 
   display.putOnDisplay(3, 3, 30, String(currentTemperature)+"C");
-
 
   display.putOnDisplay(1, 33, 56, String(currentHumidity)+"%");
   
@@ -77,7 +90,6 @@ void showDateAndTime() {
     timeClient.forceUpdate();
   }
   formattedDate = timeClient.getFormattedDate();
-  
 
   int splitT = formattedDate.indexOf("T");
   dayStamp = formattedDate.substring(0, splitT);
@@ -85,17 +97,15 @@ void showDateAndTime() {
 
   display.putOnDisplay(2, 59, 28, strDay);
   
-  String hoursStr = timeClient.getHours() < 10 ? "0" + String(timeClient.getHours()) : String(timeClient.getHours());
+  currentHour = timeClient.getHours();
+  currentMinutes = timeClient.getMinutes();
 
-  String minuteStr = timeClient.getMinutes() < 10 ? "0" + String(timeClient.getMinutes()) : String(timeClient.getMinutes());
+  String hoursStr = currentHour < 10 ? "0" + String(currentHour) : String(currentHour);
+  String minuteStr = currentMinutes < 10 ? "0" + String(currentMinutes) : String(currentMinutes);
 
   timeStamp = hoursStr + ":" + minuteStr;
-  //timeStamp = formattedDate.substring(splitT+1, formattedDate.length()-1);
 
-  display.putOnDisplay(3, 20, 1, timeStamp);
-
-
-
+  display.putOnDisplay(3, 20, 1, timeStamp); 
 }
 
 void connectToWifi() {

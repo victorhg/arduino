@@ -32,6 +32,14 @@ void OledDisplay::updateDisplay() {
   display.display();
 }
 
+void OledDisplay::drawAlarm() {
+    display.drawRect(0, 0, 128, 64, WHITE);
+    display.fillRect(0, 0, 128, 64, WHITE);
+  display.setTextSize(3);
+   display.setTextColor(BLACK);
+   display.setCursor( 32, 10 );
+  display.print( "WAKIE WAKIE!" );
+}
 void OledDisplay::displayHeader(){
 
   /*display.clearDisplay();
