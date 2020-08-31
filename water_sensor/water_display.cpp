@@ -93,11 +93,14 @@ void WaterDisplay::drawWaterLevel(float distanceToWater) {
    *  capacity: 1000L
    *  Full height (with lid): 0,94m
    *  Water tank (no lid): 0,72m
+   *  >> INSTALATION Tank Lid offset: 12cm
    *  Top diameter: 1,51m
    *  Botton diameter: 1,21m
    */
   Serial.println(distanceToWater);
-  int percentage = ((72 - distanceToWater) / 72) * 100;
+  int offsetTankLid = 12;
+  int tankHeight = 72; 
+  int percentage = ((tankHeight - (distanceToWater - offsetTankLid)) / tankHeight) * 100;
   
   //fill percentage box
   display.fillRect(1, 20 , 72, 42, BLACK);
