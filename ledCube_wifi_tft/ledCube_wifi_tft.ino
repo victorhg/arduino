@@ -24,6 +24,8 @@ String timeStamp;
 int currentHour;
 int currentMinutes;
 
+
+
 long currentTemperature;
 long currentHumidity;
 
